@@ -1,0 +1,23 @@
+[package]
+name = "etcd-txn-parser"
+version = "0.1.0"
+edition = "2024"
+homepage = "https://github.com/Akanoa/etcd-txn-parser"
+repository = "https://github.com/Akanoa/etcd-txn-parser"
+documentation = "https://docs.rs/etcd-txn-parser"
+authors = [
+    "Akanoa <dev@guern.eu>"
+]
+description = "An etcd transaction parser"
+publish = true
+keywords = [
+    "noa-parser",
+    "parser",
+    "lexer",
+    "tokenizer",
+]
+license-file = "LICENSE"
+readme = "Readme.md"
+
+[dependencies]
+noa-parser = "0.7.3"
