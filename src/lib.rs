@@ -1,3 +1,4 @@
+#![doc = include_str!("../Readme.md")]
 use crate::compare::Compare;
 use crate::operation::Operation;
 use noa_parser::bytes::matchers::match_pattern;
@@ -13,6 +14,19 @@ use noa_parser::visitor::Visitor;
 
 pub mod compare;
 pub mod operation;
+
+/// Parse a transactional data structure from a byte slice.
+///
+/// # Errors
+///
+/// If the parser encounters an unexpected token, a `ParseError` is returned.
+///
+/// # Examples
+///
+///
+pub fn parse(data: &[u8]) -> ParseResult<TxnData> {
+    TxnData::accept(&mut Scanner::new(data))
+}
 
 /// A transactional data structure.
 #[derive(Debug, PartialEq)]
@@ -56,44 +70,39 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
         // Read the compare section
         let section_compare =
             peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
-        let mut compares = vec![];
-        if !section_compare.data.is_empty() {
-            let mut section_compare_scanner = Scanner::new(section_compare.data);
-            compares =
-                SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?
-                    .into_iter()
-                    .collect();
-            scanner.bump_by(section_compare.end_slice);
-        }
+        let mut section_compare_scanner = Scanner::new(section_compare.data);
+        let compares =
+            SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?
+                .into_iter()
+                .collect();
+        scanner.bump_by(section_compare.end_slice);
+
         LineFeed::accept(scanner)?;
         LineFeed::accept(scanner)?;
 
         // Read the success section
         let section_success =
             peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
-        let mut success = vec![];
-        if !section_success.data.is_empty() {
-            let mut section_success_scanner = Scanner::new(section_success.data);
-            success =
-                SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_success_scanner)?
-                    .into_iter()
-                    .collect();
-            scanner.bump_by(section_success.end_slice);
-        }
+
+        let mut section_success_scanner = Scanner::new(section_success.data);
+        let success =
+            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_success_scanner)?
+                .into_iter()
+                .collect();
+        scanner.bump_by(section_success.end_slice);
+
         LineFeed::accept(scanner)?;
         LineFeed::accept(scanner)?;
 
         // Read the failure section
         let section_failure =
             peek(UntilEnd::default(), scanner)?.ok_or(ParseError::UnexpectedToken)?;
-        let mut failure = vec![];
-        if !section_failure.data.is_empty() {
-            let mut section_failure_scanner = Scanner::new(section_failure.data);
-            failure =
-                SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_failure_scanner)?
-                    .into_iter()
-                    .collect();
-        }
+
+        let mut section_failure_scanner = Scanner::new(section_failure.data);
+        let failure =
+            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_failure_scanner)?
+                .into_iter()
+                .collect();
 
         Ok(TxnData {
             compares,

@@ -4,16 +4,16 @@ version = 4
 
 [[package]]
 name = "etcd-txn-parser"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "noa-parser",
 ]
 
 [[package]]
 name = "noa-parser"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "246e0a286abfc3dbb04f285b71015aaa160f0f954b48a0efb4f3658d56c745b7"
+checksum = "f0ff922e5ab0dd44950009b50722745af46f130cc761ce1ebe1209ee3290dcc9"
 dependencies = [
  "thiserror",
 ]

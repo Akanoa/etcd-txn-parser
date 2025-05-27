@@ -1,6 +1,6 @@
 [package]
 name = "etcd-txn-parser"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 homepage = "https://github.com/Akanoa/etcd-txn-parser"
 repository = "https://github.com/Akanoa/etcd-txn-parser"
@@ -20,4 +20,4 @@ license-file = "LICENSE"
 readme = "Readme.md"
 
 [dependencies]
-noa-parser = "0.7.3"
+noa-parser = "0.7.4"
