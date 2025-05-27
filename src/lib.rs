@@ -86,9 +86,7 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
 
         let mut section_success_scanner = Scanner::new(section_success.data);
         let success =
-            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_success_scanner)?
-                .into_iter()
-                .collect();
+            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_success_scanner)?.data;
         scanner.bump_by(section_success.end_slice);
 
         LineFeed::accept(scanner)?;
@@ -100,9 +98,7 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
 
         let mut section_failure_scanner = Scanner::new(section_failure.data);
         let failure =
-            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_failure_scanner)?
-                .into_iter()
-                .collect();
+            SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_failure_scanner)?.data;
 
         Ok(TxnData {
             compares,

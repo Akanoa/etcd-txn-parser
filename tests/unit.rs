@@ -1,13 +1,11 @@
 use etcd_txn_parser::compare::{Compare, ModRevision, OpType};
 use etcd_txn_parser::operation::{Operation, PutData};
-use etcd_txn_parser::TxnData;
-use noa_parser::visitor::Visitor;
+use etcd_txn_parser::{parse, TxnData};
 
 #[test]
 fn test_transaction() {
     let transaction = include_bytes!("fixtures/simple.txt");
-    let mut scanner = noa_parser::scanner::Scanner::new(transaction);
-    let result = TxnData::accept(&mut scanner).expect("Failed to parse");
+    let result = parse(transaction).expect("Failed to parse");
     assert_eq!(
         result,
         TxnData {
@@ -37,8 +35,7 @@ fn test_transaction() {
 #[test]
 fn test_transaction_no_compare() {
     let transaction = include_bytes!("fixtures/no_compare.txt");
-    let mut scanner = noa_parser::scanner::Scanner::new(transaction);
-    let result = TxnData::accept(&mut scanner).expect("Failed to parse");
+    let result = parse(transaction).expect("Failed to parse");
     assert_eq!(
         result,
         TxnData {
@@ -64,8 +61,7 @@ fn test_transaction_no_compare() {
 #[test]
 fn test_transaction_no_success() {
     let transaction = include_bytes!("fixtures/no_success.txt");
-    let mut scanner = noa_parser::scanner::Scanner::new(transaction);
-    let result = TxnData::accept(&mut scanner).expect("Failed to parse");
+    let result = parse(transaction).expect("Failed to parse");
     assert_eq!(
         result,
         TxnData {
@@ -92,8 +88,7 @@ fn test_transaction_no_success() {
 #[test]
 fn test_transaction_no_failure() {
     let transaction = include_bytes!("fixtures/no_failure.txt");
-    let mut scanner = noa_parser::scanner::Scanner::new(transaction);
-    let result = TxnData::accept(&mut scanner).expect("Failed to parse");
+    let result = parse(transaction).expect("Failed to parse");
     assert_eq!(
         result,
         TxnData {
