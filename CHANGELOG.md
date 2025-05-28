@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2025-05-28
+
+### 🚜 Refactor
+
+- Use elyze instead of noa-parser and simplify the UnquotedString visitor
+
 ## [0.1.2] - 2025-05-27
 
 ### 🐛 Bug Fixes
