@@ -5,7 +5,7 @@ use elyze::bytes::matchers::match_pattern;
 use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
 use elyze::bytes::token::Token;
 use elyze::errors::{ParseError, ParseResult};
-use elyze::matcher::{Match, MatchSize};
+use elyze::matcher::Match;
 use elyze::peek::{peek, Until, UntilEnd};
 use elyze::recognizer::recognize;
 use elyze::scanner::Scanner;
@@ -52,12 +52,10 @@ impl<'a> Visitor<'a, u8> for LineFeed {
 struct SectionEnd;
 
 impl Match<u8> for SectionEnd {
-    fn matcher(&self, data: &[u8]) -> (bool, usize) {
+    fn is_matching(&self, data: &[u8]) -> (bool, usize) {
         match_pattern(b"\n\n", data)
     }
-}
 
-impl MatchSize for SectionEnd {
     fn size(&self) -> usize {
         2
     }
@@ -72,9 +70,7 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
             peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
         let mut section_compare_scanner = Scanner::new(section_compare.data);
         let compares =
-            SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?
-                .into_iter()
-                .collect();
+            SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?.data;
         scanner.bump_by(section_compare.end_slice);
 
         LineFeed::accept(scanner)?;
