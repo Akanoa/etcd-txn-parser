@@ -4,16 +4,16 @@
 //! more information.
 
 use crate::operation::Data;
-use noa_parser::acceptor::Acceptor;
-use noa_parser::bytes::components::groups::GroupKind;
-use noa_parser::bytes::primitives::number::Number;
-use noa_parser::bytes::primitives::whitespace::OptionalWhitespaces;
-use noa_parser::bytes::token::Token;
-use noa_parser::errors::{ParseError, ParseResult};
-use noa_parser::peek::{peek, Until, UntilEnd};
-use noa_parser::recognizer::Recognizer;
-use noa_parser::scanner::Scanner;
-use noa_parser::visitor::Visitor;
+use elyze::acceptor::Acceptor;
+use elyze::bytes::components::groups::GroupKind;
+use elyze::bytes::primitives::number::Number;
+use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
+use elyze::bytes::token::Token;
+use elyze::errors::{ParseError, ParseResult};
+use elyze::peek::{peek, Until, UntilEnd};
+use elyze::recognizer::Recognizer;
+use elyze::scanner::Scanner;
+use elyze::visitor::Visitor;
 
 //----------------------------------------------------------------------------
 // Key
@@ -299,8 +299,8 @@ impl<'a> Visitor<'a, u8> for Compare<'a> {
 #[cfg(test)]
 mod tests {
     use crate::compare::{Compare, CreateRevision, Lease, ModRevision, OpType, Value, Version};
-    use noa_parser::scanner::Scanner;
-    use noa_parser::visitor::Visitor;
+    use elyze::scanner::Scanner;
+    use elyze::visitor::Visitor;
 
     #[test]
     fn test_create_revision() {

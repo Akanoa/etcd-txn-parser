@@ -1,16 +1,16 @@
 #![doc = include_str!("../Readme.md")]
 use crate::compare::Compare;
 use crate::operation::Operation;
-use noa_parser::bytes::matchers::match_pattern;
-use noa_parser::bytes::primitives::whitespace::OptionalWhitespaces;
-use noa_parser::bytes::token::Token;
-use noa_parser::errors::{ParseError, ParseResult};
-use noa_parser::matcher::{Match, MatchSize};
-use noa_parser::peek::{peek, Until, UntilEnd};
-use noa_parser::recognizer::recognize;
-use noa_parser::scanner::Scanner;
-use noa_parser::separated_list::SeparatedList;
-use noa_parser::visitor::Visitor;
+use elyze::bytes::matchers::match_pattern;
+use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
+use elyze::bytes::token::Token;
+use elyze::errors::{ParseError, ParseResult};
+use elyze::matcher::{Match, MatchSize};
+use elyze::peek::{peek, Until, UntilEnd};
+use elyze::recognizer::recognize;
+use elyze::scanner::Scanner;
+use elyze::separated_list::SeparatedList;
+use elyze::visitor::Visitor;
 
 pub mod compare;
 pub mod operation;

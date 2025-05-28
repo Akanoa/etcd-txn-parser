@@ -1,15 +1,15 @@
 //! Transactional operations
 
-use noa_parser::acceptor::Acceptor;
-use noa_parser::bytes::components::groups::GroupKind;
-use noa_parser::bytes::primitives::string::DataString;
-use noa_parser::bytes::primitives::whitespace::OptionalWhitespaces;
-use noa_parser::bytes::token::Token;
-use noa_parser::errors::{ParseError, ParseResult};
-use noa_parser::peek::{peek, Until, UntilEnd};
-use noa_parser::peeker::Peeker;
-use noa_parser::scanner::Scanner;
-use noa_parser::visitor::Visitor;
+use elyze::acceptor::Acceptor;
+use elyze::bytes::components::groups::GroupKind;
+use elyze::bytes::primitives::string::DataString;
+use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
+use elyze::bytes::token::Token;
+use elyze::errors::{ParseError, ParseResult};
+use elyze::peek::{peek, Until, UntilEnd};
+use elyze::peeker::Peeker;
+use elyze::scanner::Scanner;
+use elyze::visitor::Visitor;
 
 // ----------------------------------------------------------------------------
 // QuotedString
@@ -33,21 +33,17 @@ struct UnquotedString<'a>(&'a [u8]);
 
 impl<'a> Visitor<'a, u8> for UnquotedString<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
-        let mut inner_scanner = Scanner::new(&scanner.data()[scanner.current_position()..]);
-
-        let peeked = Peeker::new(&mut inner_scanner)
-            .add_peekable(Until::new(Token::Whitespace))
-            .add_peekable(UntilEnd::default())
-            .peek()?
-            .ok_or(ParseError::UnexpectedToken)?;
-
-        // L'emprunt immutable de Peeker est terminé ici
-        let current_position = scanner.current_position();
-        let data =
-            UnquotedString(&scanner.data()[current_position..current_position + peeked.end_slice]);
+        let peeked = {
+            let peeked = Peeker::new(scanner)
+                .add_peekable(Until::new(Token::Whitespace))
+                .add_peekable(UntilEnd::default())
+                .peek()?
+                .ok_or(ParseError::UnexpectedToken)?;
+            peeked
+        };
 
         scanner.bump_by(peeked.end_slice);
-        Ok(data)
+        Ok(UnquotedString(peeked.data))
     }
 }
 
@@ -179,17 +175,17 @@ impl<'a> Visitor<'a, u8> for Operation<'a> {
 #[cfg(test)]
 mod tests {
     use crate::operation::GetData;
-    use noa_parser::visitor::Visitor;
+    use elyze::visitor::Visitor;
 
     #[test]
     fn test_get_data() {
         let data = b"get \"key\"";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::GetData::accept(&mut scanner);
         assert!(matches!(result, Ok(GetData { key: b"key" })));
 
         let data = b"get key";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::GetData::accept(&mut scanner);
         assert!(matches!(result, Ok(GetData { key: b"key" })));
     }
@@ -197,12 +193,12 @@ mod tests {
     #[test]
     fn test_delete_data() {
         let data = b"del \"key\"";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::DeleteData::accept(&mut scanner);
         assert!(matches!(result, Ok(super::DeleteData { key: b"key" })));
 
         let data = b"del key";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::DeleteData::accept(&mut scanner);
         assert!(matches!(result, Ok(super::DeleteData { key: b"key" })));
     }
@@ -210,7 +206,7 @@ mod tests {
     #[test]
     fn test_put_data() {
         let data = b"put \"key\" \"value\"";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::PutData::accept(&mut scanner);
         assert!(matches!(
             result,
@@ -221,7 +217,7 @@ mod tests {
         ));
 
         let data = b"put key value";
-        let mut scanner = noa_parser::scanner::Scanner::new(data);
+        let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::PutData::accept(&mut scanner);
         assert!(matches!(
             result,
