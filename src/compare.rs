@@ -85,7 +85,7 @@ impl<'a> Visitor<'a, u8> for CreateRevision<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let prefix = peek(Until::new(Token::OpenParen), scanner)?
             .ok_or(ParseError::UnexpectedToken)?
-            .data();
+            .peeked_slice();
         if prefix.trim_ascii_end() != b"c" && prefix != b"create".trim_ascii_end() {
             return Err(ParseError::UnexpectedToken);
         }
@@ -124,7 +124,7 @@ impl<'a> Visitor<'a, u8> for ModRevision<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let prefix = peek(Until::new(Token::OpenParen), scanner)?
             .ok_or(ParseError::UnexpectedToken)?
-            .data();
+            .peeked_slice();
         if prefix.trim_ascii_end() != b"m" && prefix != b"mod".trim_ascii_end() {
             return Err(ParseError::UnexpectedToken);
         }
@@ -163,7 +163,7 @@ impl<'a> Visitor<'a, u8> for Value<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let prefix = peek(Until::new(Token::OpenParen), scanner)?
             .ok_or(ParseError::UnexpectedToken)?
-            .data();
+            .peeked_slice();
         if prefix.trim_ascii_end() != b"val" && prefix != b"value".trim_ascii_end() {
             return Err(ParseError::UnexpectedToken);
         }
@@ -204,7 +204,7 @@ impl<'a> Visitor<'a, u8> for Version<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let prefix = peek(Until::new(Token::OpenParen), scanner)?
             .ok_or(ParseError::UnexpectedToken)?
-            .data();
+            .peeked_slice();
         if prefix.trim_ascii_end() != b"ver" && prefix != b"version".trim_ascii_end() {
             return Err(ParseError::UnexpectedToken);
         }
@@ -243,7 +243,7 @@ impl<'a> Visitor<'a, u8> for Lease<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let prefix = peek(Until::new(Token::OpenParen), scanner)?
             .ok_or(ParseError::UnexpectedToken)?
-            .data();
+            .peeked_slice();
         if prefix.trim_ascii_end() != b"lease" {
             return Err(ParseError::UnexpectedToken);
         }

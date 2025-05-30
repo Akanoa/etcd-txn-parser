@@ -48,7 +48,7 @@ impl<'a> Visitor<'a, u8> for LineFeed {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct SectionEnd;
 
 impl Match<u8> for SectionEnd {
@@ -68,33 +68,29 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
         // Read the compare section
         let section_compare =
             peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
-        let mut section_compare_scanner = Scanner::new(section_compare.data);
+        let mut section_compare_scanner = Scanner::new(section_compare.peeked_slice());
         let compares =
             SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?.data;
         scanner.bump_by(section_compare.end_slice);
-
-        LineFeed::accept(scanner)?;
-        LineFeed::accept(scanner)?;
 
         // Read the success section
         let section_success =
             peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
 
-        let mut section_success_scanner = Scanner::new(section_success.data);
+        let mut section_success_scanner = Scanner::new(section_success.peeked_slice());
         let success =
             SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_success_scanner)?.data;
         scanner.bump_by(section_success.end_slice);
-
-        LineFeed::accept(scanner)?;
-        LineFeed::accept(scanner)?;
 
         // Read the failure section
         let section_failure =
             peek(UntilEnd::default(), scanner)?.ok_or(ParseError::UnexpectedToken)?;
 
-        let mut section_failure_scanner = Scanner::new(section_failure.data);
+        let mut section_failure_scanner = Scanner::new(section_failure.peeked_slice());
         let failure =
             SeparatedList::<u8, Operation, LineFeed>::accept(&mut section_failure_scanner)?.data;
+
+        scanner.bump_by(section_failure.end_slice);
 
         Ok(TxnData {
             compares,

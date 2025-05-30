@@ -43,7 +43,7 @@ impl<'a> Visitor<'a, u8> for UnquotedString<'a> {
         };
 
         scanner.bump_by(peeked.end_slice);
-        Ok(UnquotedString(peeked.data))
+        Ok(UnquotedString(peeked.peeked_slice()))
     }
 }
 
@@ -219,6 +219,12 @@ mod tests {
         let data = b"put key value";
         let mut scanner = elyze::scanner::Scanner::new(data);
         let result = super::PutData::accept(&mut scanner);
+
+        if let Ok(result) = &result {
+            println!("{:?}", String::from_utf8_lossy(result.key));
+            println!("{:?}", String::from_utf8_lossy(result.value));
+        }
+
         assert!(matches!(
             result,
             Ok(super::PutData {

@@ -4,16 +4,16 @@ version = 4
 
 [[package]]
 name = "elyze"
-version = "1.0.5"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7edc76ece9f55b9edb04a2a5f6a18fe6972af6f0b9f1903f9e556eea2e26d945"
+checksum = "b7bd1bd599be5546ae1c3164283bf48314e1cc56a75f1d2d715e1a9fe3a93f3d"
 dependencies = [
  "thiserror",
 ]
 
 [[package]]
 name = "etcd-txn-parser"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "elyze",
 ]
