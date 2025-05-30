@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2025-05-30
+
+### ⚙️ Miscellaneous Tasks
+
+- Bump the elyze version to 1.2.1
+
 ## [1.0.4] - 2025-05-28
 
 ### ⚙️ Miscellaneous Tasks
