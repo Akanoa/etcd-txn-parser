@@ -10,7 +10,7 @@ use elyze::bytes::primitives::number::Number;
 use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
 use elyze::bytes::token::Token;
 use elyze::errors::{ParseError, ParseResult};
-use elyze::peek::{peek, Until, UntilEnd};
+use elyze::peek::{peek, UntilEnd};
 use elyze::recognizer::Recognizer;
 use elyze::scanner::Scanner;
 use elyze::visitor::Visitor;
@@ -73,17 +73,17 @@ impl<'a> Visitor<'a, u8> for OpType {
 #[derive(Debug, PartialEq)]
 pub struct CreateRevision<'a> {
     /// The key to compare.
-    key: &'a [u8],
+    pub key: &'a [u8],
     /// The value to compare with.
-    value: u64,
+    pub value: u64,
     /// The comparison operator.
-    op: OpType,
+    pub op: OpType,
 }
 
 impl<'a> Visitor<'a, u8> for CreateRevision<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
-        let prefix = peek(Until::new(Token::OpenParen), scanner)?
+        let prefix = peek(Token::OpenParen, scanner)?
             .ok_or(ParseError::UnexpectedToken)?
             .peeked_slice();
         if prefix.trim_ascii_end() != b"c" && prefix != b"create".trim_ascii_end() {
@@ -122,7 +122,7 @@ pub struct ModRevision<'a> {
 impl<'a> Visitor<'a, u8> for ModRevision<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
-        let prefix = peek(Until::new(Token::OpenParen), scanner)?
+        let prefix = peek(Token::OpenParen, scanner)?
             .ok_or(ParseError::UnexpectedToken)?
             .peeked_slice();
         if prefix.trim_ascii_end() != b"m" && prefix != b"mod".trim_ascii_end() {
@@ -151,17 +151,17 @@ impl<'a> Visitor<'a, u8> for ModRevision<'a> {
 #[derive(Debug, PartialEq)]
 pub struct Value<'a> {
     /// The key to compare.
-    key: &'a [u8],
+    pub key: &'a [u8],
     /// The value to compare with.
-    value: &'a [u8],
+    pub value: &'a [u8],
     /// The comparison operator.
-    op: OpType,
+    pub op: OpType,
 }
 
 impl<'a> Visitor<'a, u8> for Value<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
-        let prefix = peek(Until::new(Token::OpenParen), scanner)?
+        let prefix = peek(Token::OpenParen, scanner)?
             .ok_or(ParseError::UnexpectedToken)?
             .peeked_slice();
         if prefix.trim_ascii_end() != b"val" && prefix != b"value".trim_ascii_end() {
@@ -192,17 +192,17 @@ impl<'a> Visitor<'a, u8> for Value<'a> {
 #[derive(Debug, PartialEq)]
 pub struct Version<'a> {
     /// The key to compare.
-    key: &'a [u8],
+    pub key: &'a [u8],
     /// The value to compare with.
-    value: u64,
+    pub value: u64,
     /// The comparison operator.
-    op: OpType,
+    pub op: OpType,
 }
 
 impl<'a> Visitor<'a, u8> for Version<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
-        let prefix = peek(Until::new(Token::OpenParen), scanner)?
+        let prefix = peek(Token::OpenParen, scanner)?
             .ok_or(ParseError::UnexpectedToken)?
             .peeked_slice();
         if prefix.trim_ascii_end() != b"ver" && prefix != b"version".trim_ascii_end() {
@@ -231,17 +231,17 @@ impl<'a> Visitor<'a, u8> for Version<'a> {
 #[derive(Debug, PartialEq)]
 pub struct Lease<'a> {
     /// The key to compare.
-    key: &'a [u8],
+    pub key: &'a [u8],
     /// The value to compare with.
-    value: u64,
+    pub value: u64,
     /// The comparison operator.
-    op: OpType,
+    pub op: OpType,
 }
 
 impl<'a> Visitor<'a, u8> for Lease<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
-        let prefix = peek(Until::new(Token::OpenParen), scanner)?
+        let prefix = peek(Token::OpenParen, scanner)?
             .ok_or(ParseError::UnexpectedToken)?
             .peeked_slice();
         if prefix.trim_ascii_end() != b"lease" {

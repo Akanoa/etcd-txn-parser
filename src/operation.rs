@@ -6,7 +6,7 @@ use elyze::bytes::primitives::string::DataString;
 use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
 use elyze::bytes::token::Token;
 use elyze::errors::{ParseError, ParseResult};
-use elyze::peek::{peek, Until, UntilEnd};
+use elyze::peek::{peek, UntilEnd};
 use elyze::peeker::Peeker;
 use elyze::scanner::Scanner;
 use elyze::visitor::Visitor;
@@ -35,7 +35,7 @@ impl<'a> Visitor<'a, u8> for UnquotedString<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         let peeked = {
             let peeked = Peeker::new(scanner)
-                .add_peekable(Until::new(Token::Whitespace))
+                .add_peekable(Token::Whitespace)
                 .add_peekable(UntilEnd::default())
                 .peek()?
                 .ok_or(ParseError::UnexpectedToken)?;
@@ -103,7 +103,7 @@ impl<'a> Visitor<'a, u8> for PutData<'a> {
 #[derive(Debug, PartialEq)]
 pub struct DeleteData<'a> {
     /// The key to delete.
-    key: &'a [u8],
+    pub key: &'a [u8],
 }
 
 impl<'a> Visitor<'a, u8> for DeleteData<'a> {
@@ -128,7 +128,7 @@ impl<'a> Visitor<'a, u8> for DeleteData<'a> {
 #[derive(Debug, PartialEq)]
 pub struct GetData<'a> {
     /// The key to get.
-    key: &'a [u8],
+    pub key: &'a [u8],
 }
 
 impl<'a> Visitor<'a, u8> for GetData<'a> {

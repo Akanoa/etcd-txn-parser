@@ -6,7 +6,7 @@ use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
 use elyze::bytes::token::Token;
 use elyze::errors::{ParseError, ParseResult};
 use elyze::matcher::Match;
-use elyze::peek::{peek, Until, UntilEnd};
+use elyze::peek::{peek, DefaultPeekableImplementation, PeekableImplementation, UntilEnd};
 use elyze::recognizer::recognize;
 use elyze::scanner::Scanner;
 use elyze::separated_list::SeparatedList;
@@ -61,21 +61,23 @@ impl Match<u8> for SectionEnd {
     }
 }
 
+impl PeekableImplementation for SectionEnd {
+    type Type = DefaultPeekableImplementation;
+}
+
 impl<'a> Visitor<'a, u8> for TxnData<'a> {
     fn accept(scanner: &mut Scanner<'a, u8>) -> ParseResult<Self> {
         OptionalWhitespaces::accept(scanner)?;
 
         // Read the compare section
-        let section_compare =
-            peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
+        let section_compare = peek(SectionEnd, scanner)?.ok_or(ParseError::UnexpectedToken)?;
         let mut section_compare_scanner = Scanner::new(section_compare.peeked_slice());
         let compares =
             SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?.data;
         scanner.bump_by(section_compare.end_slice);
 
         // Read the success section
-        let section_success =
-            peek(Until::new(SectionEnd), scanner)?.ok_or(ParseError::UnexpectedToken)?;
+        let section_success = peek(SectionEnd, scanner)?.ok_or(ParseError::UnexpectedToken)?;
 
         let mut section_success_scanner = Scanner::new(section_success.peeked_slice());
         let success =
