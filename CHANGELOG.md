@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-06-06
+
+### 🐛 Bug Fixes
+
+- Make public all fields + bump elyze to 1.5.2
+
 ## [1.0.5] - 2025-05-30
 
 ### ⚙️ Miscellaneous Tasks
