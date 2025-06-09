@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2025-06-09
+
+### 🐛 Bug Fixes
+
+- Compare by value doesn't consume all the buffer
+
 ## [0.2.0] - 2025-06-06
 
 ### 🐛 Bug Fixes
