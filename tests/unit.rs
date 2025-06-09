@@ -1,4 +1,4 @@
-use etcd_txn_parser::compare::{Compare, ModRevision, OpType};
+use etcd_txn_parser::compare::{Compare, ModRevision, OpType, Value};
 use etcd_txn_parser::operation::{Operation, PutData};
 use etcd_txn_parser::{parse, TxnData};
 
@@ -102,6 +102,27 @@ fn test_transaction_no_failure() {
                 value: b"overwrote-key1"
             })],
             failure: vec![]
+        }
+    )
+}
+
+#[test]
+fn test_transaction_val_key() {
+    let transaction = include_bytes!("fixtures/val_key.txt");
+    let result = parse(transaction).expect("Failed to parse");
+    assert_eq!(
+        result,
+        TxnData {
+            compares: vec![Compare::Value(Value {
+                key: b"key",
+                value: b"toto",
+                op: OpType::Equal
+            })],
+            success: vec![],
+            failure: vec![Operation::Put(PutData {
+                key: b"key",
+                value: b"toto"
+            })]
         }
     )
 }

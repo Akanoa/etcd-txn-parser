@@ -1,0 +1,5 @@
+val("key") = "toto"
+
+
+
+put "key" "toto"

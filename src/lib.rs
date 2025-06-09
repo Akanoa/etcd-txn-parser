@@ -71,6 +71,7 @@ impl<'a> Visitor<'a, u8> for TxnData<'a> {
 
         // Read the compare section
         let section_compare = peek(SectionEnd, scanner)?.ok_or(ParseError::UnexpectedToken)?;
+
         let mut section_compare_scanner = Scanner::new(section_compare.peeked_slice());
         let compares =
             SeparatedList::<u8, Compare, LineFeed>::accept(&mut section_compare_scanner)?.data;

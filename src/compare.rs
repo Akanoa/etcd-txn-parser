@@ -10,7 +10,7 @@ use elyze::bytes::primitives::number::Number;
 use elyze::bytes::primitives::whitespace::OptionalWhitespaces;
 use elyze::bytes::token::Token;
 use elyze::errors::{ParseError, ParseResult};
-use elyze::peek::{peek, UntilEnd};
+use elyze::peek::peek;
 use elyze::recognizer::Recognizer;
 use elyze::scanner::Scanner;
 use elyze::visitor::Visitor;
@@ -176,9 +176,10 @@ impl<'a> Visitor<'a, u8> for Value<'a> {
         OptionalWhitespaces::accept(scanner)?;
         let op = OpType::accept(scanner)?;
         OptionalWhitespaces::accept(scanner)?;
-        let value = peek(UntilEnd::default(), scanner)?
-            .ok_or(ParseError::UnexpectedToken)?
-            .data;
+
+        let value = Data::accept(scanner)?.data;
+
+        OptionalWhitespaces::accept(scanner)?;
 
         Ok(Value { key, value, op })
     }
