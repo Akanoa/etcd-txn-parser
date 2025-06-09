@@ -114,8 +114,17 @@ impl<'a> Visitor<'a, u8> for DeleteData<'a> {
             return Err(ParseError::UnexpectedToken);
         }
         OptionalWhitespaces::accept(scanner)?;
-        let key = Data::accept(scanner)?.data;
+        let until_ln = Peeker::new(scanner)
+            .add_peekable(Token::Ln)
+            .add_peekable(UntilEnd::default())
+            .peek()?
+            .ok_or(ParseError::UnexpectedToken)?;
+        let mut scanner_until_ln = Scanner::new(until_ln.peeked_slice());
+
+        let key = Data::accept(&mut scanner_until_ln)?.data;
+        scanner.bump_by(scanner_until_ln.current_position());
         OptionalWhitespaces::accept(scanner)?;
+
         Ok(DeleteData { key })
     }
 }
@@ -138,9 +147,20 @@ impl<'a> Visitor<'a, u8> for GetData<'a> {
         if command != "get" {
             return Err(ParseError::UnexpectedToken);
         }
+
         OptionalWhitespaces::accept(scanner)?;
-        let key = Data::accept(scanner)?.data;
+
+        let until_ln = Peeker::new(scanner)
+            .add_peekable(Token::Ln)
+            .add_peekable(UntilEnd::default())
+            .peek()?
+            .ok_or(ParseError::UnexpectedToken)?;
+        let mut scanner_until_ln = Scanner::new(until_ln.peeked_slice());
+
+        let key = Data::accept(&mut scanner_until_ln)?.data;
+        scanner.bump_by(scanner_until_ln.current_position());
         OptionalWhitespaces::accept(scanner)?;
+
         Ok(GetData { key })
     }
 }

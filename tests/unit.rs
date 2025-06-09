@@ -1,5 +1,5 @@
 use etcd_txn_parser::compare::{Compare, ModRevision, OpType, Value};
-use etcd_txn_parser::operation::{Operation, PutData};
+use etcd_txn_parser::operation::{DeleteData, GetData, Operation, PutData};
 use etcd_txn_parser::{parse, TxnData};
 
 #[test]
@@ -123,6 +123,25 @@ fn test_transaction_val_key() {
                 key: b"key",
                 value: b"toto"
             })]
+        }
+    )
+}
+
+#[test]
+fn test_transaction_just_success() {
+    let transaction = include_bytes!("fixtures/just_success.txt");
+    let result = parse(transaction).expect("Failed to parse");
+    assert_eq!(
+        result,
+        TxnData {
+            compares: vec![],
+            success: vec![
+                Operation::Get(GetData { key: b"key1" }),
+                Operation::Get(GetData { key: b"key2" }),
+                Operation::Get(GetData { key: b"key3" }),
+                Operation::Delete(DeleteData { key: b"key4" })
+            ],
+            failure: vec![]
         }
     )
 }
