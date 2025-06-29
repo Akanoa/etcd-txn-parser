@@ -145,3 +145,24 @@ fn test_transaction_just_success() {
         }
     )
 }
+
+#[test]
+fn test_transaction_mod_equal_0() {
+    let transaction = include_bytes!("fixtures/mod_equal_0.txt");
+    let result = parse(transaction).expect("Failed to parse");
+    assert_eq!(
+        result,
+        TxnData {
+            compares: vec![Compare::ModRevision(ModRevision {
+                key: b"/bootstrap/10aee79d3",
+                value: 0,
+                op: OpType::Equal
+            })],
+            success: vec![Operation::Put(PutData {
+                key: b"/bootstrap/10aee79d3",
+                value: b""
+            })],
+            failure: vec![]
+        }
+    )
+}
